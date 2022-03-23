@@ -23,20 +23,21 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="/index.html">Junsai World</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+          <span class="navbar-toggler-icon"></span>
+        </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/login.html">Sign Up</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/upload.html">Upload</a>
+                        <a class="nav-link active" aria-current="page" href="/login.html">Sign Up</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/upload.html">Upload</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </a>
+                Dropdown
+              </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/upload.html">Upload</a></li>
                             <li><a class="dropdown-item" href="#">Another action</a></li>
@@ -50,43 +51,54 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a
-                >
-              </li>
-            </ul>
-            <form class="d-flex">
-              <input
-                class="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button class="btn btn-outline-success" type="submit">
-                Search
-              </button>
-            </form>
-          </div>
+              >
+            </li>
+          </ul>
+          <form class="d-flex">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-success" type="submit">
+              Search
+            </button>
+          </form>
         </div>
-      </nav>
+      </div>
+    </nav>
 
+    <!-- login UI -->
     <div class="container mt-3">
-      <input
-        type="text"
-        class="form-control mt-2"
-        id="title"
-        placeholder="title"
-      />
-      <textarea class="form-control mt-2" id="content">content</textarea>
-      <input
-        type="text"
-        class="form-control mt-2"
-        id="price"
-        placeholder="price"
-      />
-      <input class="form-control mt-2" type="file" id="image" />
-      <button class="btn btn-danger mt-3" id="send">올리기</button>
+      <div class="mb-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="name"
+          id="name-new"
+        />
+      </div>
+      <div class="mb-3">
+        <input
+          type="email"
+          class="form-control"
+          placeholder="email"
+          id="email-new"
+        />
+      </div>
+      <div class="mb-3">
+        <input
+          type="password"
+          class="form-control"
+          placeholder="pw"
+          id="pw-new"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary" id="register">
+        가입하기
+      </button>
     </div>
-
-    <div class="container mt-3"></div>
 
     <script>
       const firebaseConfig = {
@@ -107,44 +119,17 @@
       const db = firebase.firestore();
       const storage = firebase.storage();
 
-      $("#send").click(function () {
-        var file = document.querySelector("#image").files[0];
-        var storageRef = storage.ref();
-        var 저장경로 = storageRef.child("image/" + file.name);
-        var 업로드작업 = 저장경로.put(file);
+      $("#register").click(function () {
+        var 이메일 = $("#email-new").val();
+        var 패스워드 = $("#pw-new").val();
 
-        업로드작업.on(
-          "state_changed",
-          // 변화시 동작하는 함수
-          null,
-          //에러시 동작하는 함수
-          (error) => {
-            console.error("실패사유는", error);
-          },
-          // 성공시 동작하는 함수
-          () => {
-            업로드작업.snapshot.ref.getDownloadURL().then((url) => {
-              console.log("업로드된 경로는", url);
-
-              var WILLSAVE = {
-                제목: $("#title").val(),
-                가격: $("#price").val(),
-                내용: $("#content").val(),
-                날짜: new Date(),
-                이미지: url,
-              };
-              db.collection("product")
-                .add(WILLSAVE)
-                .then((result) => {
-                  console.log(result);
-                  window.location.href = "/index.html";
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            });
-          }
-        );
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(이메일, 패스워드)
+          .then((result) => {
+            console.log(result);
+            console.log(result.user);
+          });
       });
     </script>
   </body>
